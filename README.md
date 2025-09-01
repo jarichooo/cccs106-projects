@@ -3,10 +3,10 @@ Application Development and Emerging Technologies
 Academic Year 2025-2026
 
 ## Student Information
-- **Name:** [Joshua Jericho D. Barja]
-- **Student ID:** [231002307]
-- **Program:** [BSCS]
-- **Section:** [3A]
+- **Name:** Joshua Jericho D. Barja
+- **Student ID:** 231002307
+- **Program:** BSCS
+- **Section:** 3A
 
 ## Repository Structure
 
