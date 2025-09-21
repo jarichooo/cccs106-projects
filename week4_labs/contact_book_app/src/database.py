@@ -24,11 +24,17 @@ def add_contact_db(conn, name, phone, email):
     )
     conn.commit()
 
-def get_all_contacts_db(conn):
+def get_all_contacts_db(search=""):
     """Retrieves all contacts from the database."""
+    conn = init_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, name, phone, email FROM contacts")
-    return cursor.fetchall()
+    if search:
+        cursor.execute("SELECT id, name, phone, email FROM contacts WHERE name LIKE ?", (f"%{search}%",))
+    else:
+        cursor.execute("SELECT id, name, phone, email FROM contacts")
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
 
 def update_contact_db(conn, contact_id, name, phone, email):
     """Updates an existing contact in the database."""

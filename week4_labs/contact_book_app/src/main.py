@@ -9,7 +9,10 @@ def main(page: ft.Page):
     page.window_height = 600
     
     db_conn = init_db()
+    def search_pattern(e):
+        display_contacts(page, contacts_list_view, db_conn, search_input.value)
 
+    search_input = ft.TextField(label="Search", on_change=search_pattern, width=350)
     name_input = ft.TextField(label="Name", width=350)
     phone_input = ft.TextField(label="Phone", width=350)
     email_input = ft.TextField(label="Email", width=350)
@@ -27,6 +30,7 @@ def main(page: ft.Page):
             ft.Column(
             [
                 ft.Text("Enter Contact Details:", size=20, weight=ft.FontWeight.BOLD),
+                search_input,
                 name_input,
                 phone_input,
                 email_input,
@@ -38,7 +42,7 @@ def main(page: ft.Page):
         )
     )
     
-    display_contacts(page, contacts_list_view, db_conn)
+    display_contacts(page, contacts_list_view, db_conn, search_input.value)
 
 if __name__ == "__main__":
     ft.app(target=main)
