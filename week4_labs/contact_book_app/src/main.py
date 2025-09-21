@@ -48,7 +48,7 @@ def main(page: ft.Page):
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN  # pushes them apart
                 ),
-                    ft.Column(
+                ft.Column(
                         [
                             search_input,
                             name_input,
