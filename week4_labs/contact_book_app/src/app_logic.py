@@ -45,14 +45,14 @@ def add_contact(page, inputs, contacts_list_view, db_conn):
         
     for field in inputs:
         field.value = ""
-    display_contacts(page, contacts_list_view, db_conn)
+    display_contacts(page, contacts_list_view, db_conn, "")
     page.update()
 
 def delete_contact(page, contact_id, db_conn, contacts_list_view):
     """Deletes a contact and refreshes the list."""
     def confirm_delete(e):
         delete_contact_db(db_conn, contact_id)
-        display_contacts(page, contacts_list_view, db_conn)
+        display_contacts(page, contacts_list_view, db_conn, "")
         
         confirmation_dialog.open = False
         page.update()
@@ -79,7 +79,7 @@ def open_edit_dialog(page, contact, db_conn, contacts_list_view):
         update_contact_db(db_conn, contact_id, edit_name.value, edit_phone.value, edit_email.value)
         dialog.open = False
         page.update()
-        display_contacts(page, contacts_list_view, db_conn)
+        display_contacts(page, contacts_list_view, db_conn, "")
     dialog = ft.AlertDialog(
         modal=True,
         title=ft.Text("Edit Contact"),

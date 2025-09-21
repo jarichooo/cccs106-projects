@@ -32,6 +32,7 @@ def get_all_contacts_db(search=""):
         cursor.execute("SELECT id, name, phone, email FROM contacts WHERE name LIKE ?", (f"%{search}%",))
     else:
         cursor.execute("SELECT id, name, phone, email FROM contacts")
+    
     rows = cursor.fetchall()
     conn.close()
     return rows
