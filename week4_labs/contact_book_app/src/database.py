@@ -29,7 +29,13 @@ def get_all_contacts_db(search=""):
     conn = init_db()
     cursor = conn.cursor()
     if search:
-        cursor.execute("SELECT id, name, phone, email FROM contacts WHERE name LIKE ?", (f"%{search}%",))
+        query = """ 
+            SELECT id, name, phone, email 
+            FROM contacts 
+            WHERE name LIKE ? OR phone LIKE ? OR email LIKE ?
+            """
+        wildcard = f"%{search}%"
+        cursor.execute(query,(wildcard, wildcard, wildcard))
     else:
         cursor.execute("SELECT id, name, phone, email FROM contacts")
     
