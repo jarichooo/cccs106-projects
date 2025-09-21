@@ -119,7 +119,7 @@ def main(page: ft.Page):
                 page.open(failure_dialog)
 
         except mysql.connector.Error as e:
-            page.open = database_error_dialog
+            page.open(database_error_dialog)
         
         page.update()
     
