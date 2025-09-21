@@ -18,7 +18,7 @@ def main(page: ft.Page):
 
     toggle_button = ft.ElevatedButton(
         "Change theme",
-        on_click=toggle_theme
+        on_click=toggle_theme,
     )
 
     db_conn = init_db()
@@ -47,15 +47,21 @@ def main(page: ft.Page):
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN  # pushes them apart
                 ),
-                ft.Column(
-                    [
-                        search_input,
-                        name_input,
-                        phone_input,
-                        email_input,
-                        add_button,
-                    ],
-                    expand=True 
+                ft.Container(
+                    content=ft.Column(
+                        [
+                            ft.Container(search_input),
+                            ft.Container(name_input),
+                            ft.Container(phone_input),
+                            ft.Container(email_input),
+                            add_button,
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    ),
+                    border=ft.border.all(2, ft.Colors.BLUE),   # thickness=2, color=blue
+                    border_radius=10,                           # optional: rounded corners
+                    padding=10,                                 # spacing inside border
+                    margin=10                                   # spacing outside border
                 ),
                 ft.Divider(),
                 ft.Column(

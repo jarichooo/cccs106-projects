@@ -5,29 +5,57 @@ def display_contacts(page, contacts_list_view, db_conn, search):
     """Fetches and displays all contacts in the ListView."""
     contacts_list_view.controls.clear()
     contacts = get_all_contacts_db(search)
-    
+
     for contact in contacts:
         contact_id, name, phone, email = contact
-        
+
         contacts_list_view.controls.append(
-            ft.ListTile(
-                title=ft.Text(name),
-                subtitle=ft.Text(f"Phone: {phone} | Email: {email}"),
-                trailing=ft.PopupMenuButton(
-                    icon=ft.Icons.MORE_VERT,
-                    items=[
-                        ft.PopupMenuItem(
-                            text="Edit",
-                            icon=ft.Icons.EDIT,
-                            on_click=lambda _, c=contact: open_edit_dialog(page, c, db_conn, contacts_list_view)
-                        ),
-                        ft.PopupMenuItem(),
-                        ft.PopupMenuItem(
-                            text="Delete",
-                            icon=ft.Icons.DELETE,
-                            on_click=lambda _, cid=contact_id: delete_contact(page, cid, db_conn, contacts_list_view)
-                        ),
-                    ],
+            ft.Card(
+                elevation=4,
+                margin=10,
+                content=ft.Container(
+                    padding=15,
+                    content=ft.Row(
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        vertical_alignment=ft.CrossAxisAlignment.START,
+                        controls=[
+                            # Left side: contact details
+                            ft.Column(
+                                spacing=5,
+                                alignment=ft.MainAxisAlignment.START,
+                                controls=[
+                                    ft.Text(name, size=16, weight=ft.FontWeight.BOLD),
+                                    ft.Row(
+                                        [ft.Icon(ft.Icons.PHONE, size=16, color=ft.Colors.BLUE),
+                                         ft.Text(phone, size=14)],
+                                        spacing=8,
+                                    ),
+                                    ft.Row(
+                                        [ft.Icon(ft.Icons.EMAIL, size=16, color=ft.Colors.RED),
+                                         ft.Text(email, size=14)],
+                                        spacing=8,
+                                    ),
+                                ],
+                            ),
+                            # Right side: menu button
+                            ft.PopupMenuButton(
+                                icon=ft.Icons.MORE_VERT,
+                                items=[
+                                    ft.PopupMenuItem(
+                                        text="Edit",
+                                        icon=ft.Icons.EDIT,
+                                        on_click=lambda _, c=contact: open_edit_dialog(page, c, db_conn, contacts_list_view)
+                                    ),
+                                    ft.PopupMenuItem(),  # separator
+                                    ft.PopupMenuItem(
+                                        text="Delete",
+                                        icon=ft.Icons.DELETE,
+                                        on_click=lambda _, cid=contact_id: delete_contact(page, cid, db_conn, contacts_list_view)
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
                 ),
             )
         )
@@ -62,8 +90,8 @@ def delete_contact(page, contact_id, db_conn, contacts_list_view):
         modal=True,
         title=ft.Text("Are you sure you want to delete this contact?"),
         actions=[
+            ft.TextButton("Yes", on_click=confirm_delete),
             ft.TextButton("No", on_click=lambda e: setattr(confirmation_dialog, 'open', False) or page.update()), 
-            ft.TextButton("Yes", on_click=confirm_delete)
         ],
     )
     page.open(confirmation_dialog)
