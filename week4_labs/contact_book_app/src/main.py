@@ -9,6 +9,7 @@ def main(page: ft.Page):
     page.window_height = 600
     page.theme_mode = ft.ThemeMode.DARK
     
+    
     def toggle_theme(e):
         if page.theme_mode == ft.ThemeMode.LIGHT:
             page.theme_mode = ft.ThemeMode.DARK
@@ -59,7 +60,7 @@ def main(page: ft.Page):
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     ),
                     border=ft.border.all(2, ft.Colors.BLUE),   # thickness=2, color=blue
-                    border_radius=10,                           # optional: rounded corners
+                    border_radius=10,                           # rounded corners
                     padding=10,                                 # spacing inside border
                     margin=10                                   # spacing outside border
                 ),

@@ -23,6 +23,11 @@ Academic Year 2025-2026
 - `week3_labs/main.py` - main.py flet application
 - `week3_labs/db_connection.py` - MySQL connection application
 
+### Week 4 Labs - Contact book Application Enhancement
+- `week4_labs/main.py` - Main program code
+- `week4_labs/app_logic.py` - Logic module
+- - `week4_labs/database.py` - Database (SQLlite)
+
 ### Module 1 Final Project
 - `module1_final/` - Final integrated project (TBD)
 
@@ -49,6 +54,6 @@ Academic Year 2025-2026
 # Navigate to project directory
 cd week2_labs
 
-# Run applications
+# Run applications e.g,:
 python hello_flet.py
 python personal_info_gui.py
