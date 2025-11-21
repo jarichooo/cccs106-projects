@@ -4,3 +4,5 @@ __pycache__/
 .env 
 cccs106_env_barja/
 *.db
+venv/
+.DS_Store
