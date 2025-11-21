@@ -4,8 +4,6 @@
 import httpx
 from typing import Dict, Optional
 from config import Config
-from cache_manager import save_cache, load_cache
-import requests
 
 
 class WeatherServiceError(Exception):
