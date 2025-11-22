@@ -20,6 +20,11 @@ class WeatherApp:
         self.history = self.load_history()
         self.setup_page()
         self.build_ui()
+        self.current_unit = "metric"        # default to metric (°C, m/s)
+        self.current_temp = 0               # current temperature in the active unit
+        self.current_feels_like = 0
+        self.current_wind_speed = 0
+        self.current_data = None            # store full weather data for reuse
     
     # json file functions
     def load_history(self):
@@ -236,26 +241,73 @@ class WeatherApp:
             self.theme_button.icon = ft.Icons.DARK_MODE
         self.page.update()
 
+    # temp toggle
+    def toggle_units(self, e):
+        """Toggle between Celsius and Fahrenheit + update display."""
+        if not self.current_data:
+            return  # no data yet
+
+        # Toggle unit
+        self.current_unit = "imperial" if self.current_unit == "metric" else "metric"
+
+        # Re-display weather with new units
+        self.page.run_task(self.display_weather, self.current_data)
+
     async def display_weather(self, data: dict):
-        """Display weather information."""
-        # Extract data
+        """Display weather information and store data for unit conversion."""
+        # Store the raw data and values
+        self.current_data = data
+        
         city_name = data.get("name", "Unknown")
         country = data.get("sys", {}).get("country", "")
-        temp = data.get("main", {}).get("temp", 0)
-        feels_like = data.get("main", {}).get("feels_like", 0)
+        temp_c = data.get("main", {}).get("temp", 0)
+        feels_like_c = data.get("main", {}).get("feels_like", 0)
         humidity = data.get("main", {}).get("humidity", 0)
         description = data.get("weather", [{}])[0].get("description", "").title()
         icon_code = data.get("weather", [{}])[0].get("icon", "01d")
-        wind_speed = data.get("wind", {}).get("speed", 0)
-        
-        # Build weather display
+        wind_speed_ms = data.get("wind", {}).get("speed", 0)
+
+        # Convert wind speed: m/s → mph when imperial
+        wind_speed = wind_speed_ms * 3.6 if self.current_unit == "imperial" else wind_speed_ms
+        wind_unit = "km/h" if self.current_unit == "imperial" else "m/s"
+
+        # Set temperature based on current unit
+        if self.current_unit == "metric":
+            temp = temp_c
+            feels_like = feels_like_c
+            temp_unit = "C"
+        else:
+            temp = (temp_c * 9/5) + 32
+            feels_like = (feels_like_c * 9/5) + 32
+            temp_unit = "F"
+
+        # Store current displayed values
+        self.current_temp = temp
+        self.current_feels_like = feels_like
+        self.current_wind_speed = wind_speed
+
+        # Build UI
         self.weather_container.content = ft.Column(
             [
-                # Location
-                ft.Text(
-                    f"{city_name}, {country}",
-                    size=24,
-                    weight=ft.FontWeight.BOLD,
+                # Location + Unit Toggle Button
+                ft.Row(
+                    [
+                        ft.Text(
+                            f"{city_name}, {country}",
+                            size=24,
+                            weight=ft.FontWeight.BOLD,
+                        ),
+                        ft.IconButton(
+                            icon=ft.Icons.THERMOSTAT,
+                            tooltip="Toggle °C / °F",
+                            on_click=self.toggle_units,
+                            style=ft.ButtonStyle(
+                                bgcolor=ft.Colors.BLUE_100,
+                                shape=ft.RoundedRectangleBorder(radius=20),
+                            )
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 ),
                 
                 # Weather icon and description
@@ -266,27 +318,37 @@ class WeatherApp:
                             width=100,
                             height=100,
                         ),
-                        ft.Text(
-                            description,
-                            size=20,
-                            italic=True,
+                        ft.Column(
+                            [
+                                ft.Text(description, size=20, italic=True),
+                                # Big temperature + toggle button side by side
+                                ft.Row(
+                                    [
+                                        ft.Text(
+                                            f"{temp:.1f}°",
+                                            size=48,
+                                            weight=ft.FontWeight.BOLD,
+                                            color=ft.Colors.BLUE_900,
+                                        ),
+                                        ft.TextButton(
+                                            text="C" if self.current_unit == "metric" else "F",
+                                            on_click=self.toggle_units,
+                                            style=ft.ButtonStyle(
+                                                bgcolor=ft.Colors.BLUE_200,
+                                                color=ft.Colors.BLUE_900,
+                                                padding=ft.padding.symmetric(horizontal=12, vertical=8),
+                                                shape=ft.RoundedRectangleBorder(radius=20),
+                                            ),
+                                        ),
+                                    ],
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                    spacing=0,
+                                ),
+                                ft.Text(f"Feels like {feels_like:.1f}°{temp_unit}", size=16, color=ft.Colors.GREY_700),
+                            ]
                         ),
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
-                ),
-                
-                # Temperature
-                ft.Text(
-                    f"{temp:.1f}°C",
-                    size=48,
-                    weight=ft.FontWeight.BOLD,
-                    color=ft.Colors.BLUE_900,
-                ),
-                
-                ft.Text(
-                    f"Feels like {feels_like:.1f}°C",
-                    size=16,
-                    color=ft.Colors.GREY_700,
                 ),
                 
                 ft.Divider(),
@@ -302,7 +364,7 @@ class WeatherApp:
                         self.create_info_card(
                             ft.Icons.AIR,
                             "Wind Speed",
-                            f"{wind_speed} m/s"
+                            f"{wind_speed:.1f} {wind_unit}"
                         ),
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_EVENLY,
@@ -311,19 +373,16 @@ class WeatherApp:
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=10,
         )
-        
-        # Animations
+
+        # Show with fade-in
         self.weather_container.animate_opacity = 300
         self.weather_container.opacity = 0
         self.weather_container.visible = True
         self.page.update()
-
-        # Fade in
-        import asyncio
         await asyncio.sleep(0.1)
         self.weather_container.opacity = 1
-        self.page.update()
-    
+        self.page.update()    
+
     def create_info_card(self, icon, label, value):
         """Create an info card for weather details."""
         return ft.Container(
