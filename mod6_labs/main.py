@@ -86,7 +86,8 @@ class WeatherApp:
             ft.ListTile(
                 leading=ft.Icon(ft.Icons.HISTORY),
                 title=ft.Text(city),
-                on_click=lambda e, c=city: self.select_city(c)
+                on_click=lambda e, c=city: self.select_city(c),
+
             )
             for city in self.history[:MAX_HISTORY]
         ]
@@ -102,8 +103,10 @@ class WeatherApp:
             weight=ft.FontWeight.BOLD,
             color=ft.Colors.BLUE_700,
         )
-
-        self.history_column = ft.Column(tight=True)
+        search_view_constraints = ft.BoxConstraints(
+            max_height=220,
+        )
+        self.history_column = ft.Column()
         
         # City input field
         self.city_input = ft.SearchBar(
@@ -112,7 +115,15 @@ class WeatherApp:
             view_hint_text="Your recent searches",
             on_tap=lambda e: self.city_input.open_view(),
             on_submit=self.on_search_async,
-            controls=[self.history_column]
+            
+            view_size_constraints=search_view_constraints, 
+            
+            controls=[
+                ft.Column(
+                    controls=[self.history_column],
+                    scroll=ft.ScrollMode.ADAPTIVE 
+                )
+            ]
         )
         
         # Search button
