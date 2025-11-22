@@ -104,7 +104,7 @@ class WeatherApp:
             color=ft.Colors.BLUE_700,
         )
         search_view_constraints = ft.BoxConstraints(
-            max_height=220,
+            max_height=164,
         )
         self.history_column = ft.Column()
         
