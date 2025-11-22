@@ -296,6 +296,7 @@ class WeatherApp:
                             f"{city_name}, {country}",
                             size=24,
                             weight=ft.FontWeight.BOLD,
+                            color=ft.Colors.BLACK
                         ),
                         ft.IconButton(
                             icon=ft.Icons.THERMOSTAT,
@@ -320,7 +321,7 @@ class WeatherApp:
                         ),
                         ft.Column(
                             [
-                                ft.Text(description, size=20, italic=True),
+                                ft.Text(description, size=20, italic=True, color=ft.Colors.BLACK),
                                 # Big temperature + toggle button side by side
                                 ft.Row(
                                     [
